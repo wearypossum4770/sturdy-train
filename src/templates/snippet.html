@@ -1,0 +1,12 @@
+<script>
+  window.sturdyTrainDataLayer = window.sturdyTrainDataLayer || []
+  const commands = new Set(['config','js','send','connect'])
+  const sturdyTag = (...args) => commands.has(args[0]) && sturdyTrainDataLayer.push(args)
+  sturdyTag('js', Date.now())
+  /* prettier-ignore */
+  sturdyTag('config', 'UA-XXXXXX-1', { ajs_anonymous_id: "5c16998b-274d-45e5-94b8-3426aa01e7e9", ajs_group_id: null, ajs_group_properties: {}, ajs_user_id: null, ajs_user_traits: {} })
+  /* prettier-ignore */
+  sturdyTag('connect', 'dreamdata.io', {ack: "1687371431712", inProgress: {}, queue: [], recalimEnd:null, recalimStart: null})
+  /* prettier-ignore */
+  sturdyTag('connect', 'sturdy-train.io', {"timestamp":1687617990276,"anonymous_id":"aae79b03-ef47-41ca-8cb4-e863b63a69a6"})
+</script>
