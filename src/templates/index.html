@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<script>
+  const pageStart = (()=>Date.now())()
+  const sorageKey = 'sturdy-train'
+  let data = JSON.parse(localStorage.getItem(sorageKey))
+  window.sturdyTrainDataLayer = window.sturdyTrainDataLayer || []
+  const sturdyTag = ({ eventName, eventType, payload}) =>sturdyTrainDataLayer.push([eventName, eventType, payload])
+  if (!data) {
+    const payload = {timestamp:pageStart, anonymous_id: crypto.randomUUID()}
+    localStorage.setItem(sorageKey, JSON.stringify(payload))
+    sturdyTag({eventName: 'first_visit',  payload})
+  } else {
+    sturdyTag({eventName: 'return_visit', payload: data})
+  }
+</script>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  
+</body>
+<script async>
+
+</script>
+</html>

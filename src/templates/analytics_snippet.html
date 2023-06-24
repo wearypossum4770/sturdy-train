@@ -1,6 +1,6 @@
 <script>
   window.sturdyTrainDataLayer = window.sturdyTrainDataLayer || []
-  const commands = new Set(['config','js','send','connect'])
+  const commands = new Set(['config','js','send','connect','event', 'create'])
   const sturdyTag = (...args) => commands.has(args[0]) && sturdyTrainDataLayer.push(args)
   sturdyTag('js', Date.now())
   /* prettier-ignore */
@@ -9,4 +9,7 @@
   sturdyTag('connect', 'dreamdata.io', {ack: "1687371431712", inProgress: {}, queue: [], recalimEnd:null, recalimStart: null})
   /* prettier-ignore */
   sturdyTag('connect', 'sturdy-train.io', {"timestamp":1687617990276,"anonymous_id":"aae79b03-ef47-41ca-8cb4-e863b63a69a6"})
+  sturdyTag('install', 'activemq', 'homebrew.mxcl.activemq', 'successfully started')
+  sturdyTag('event', 'sign_in', {'method': 'password_authentication', send_to: 'UA-XXXXXX-2', groups:['group1', 'group2']})
+  sturdyTag('create', {tracking_id:"UA-12345-12"}, 'auto')
 </script>
