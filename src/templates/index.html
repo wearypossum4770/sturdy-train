@@ -1,28 +1,157 @@
 <!DOCTYPE html>
-<script>
-  const pageStart = (()=>Date.now())()
-  const sorageKey = 'sturdy-train'
-  let data = JSON.parse(localStorage.getItem(sorageKey))
-  window.sturdyTrainDataLayer = window.sturdyTrainDataLayer || []
-  const sturdyTag = ({ eventName, eventType, payload}) =>sturdyTrainDataLayer.push([eventName, eventType, payload])
-  if (!data) {
-    const payload = {timestamp:pageStart, anonymous_id: crypto.randomUUID()}
-    localStorage.setItem(sorageKey, JSON.stringify(payload))
-    sturdyTag({eventName: 'first_visit',  payload})
-  } else {
-    sturdyTag({eventName: 'return_visit', payload: data})
-  }
-</script>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-<body>
-  
-</body>
-<script async>
 
-</script>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .form-group {
+        display: flex;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Analytics Index</h1>
+    <button onclick="fetchData(event)" type="button">Send Analytics</button>
+    <form onsubmit="handleSubmit(event)">
+      <div class="form-group">
+        <label></label>
+        <input type="checkbox" />
+      </div>
+      <button>Submit</button>
+    </form>
+  </body>
+  <script>
+    const uuidToRust = (uuid) => {
+      const hexidecimal = (match) => `0x${match},`;
+      return uuid
+        .replaceAll(/-/g, "")
+        .replaceAll(/\w{2}/g, hexidecimal)
+        .split(",")
+        .reduce((a, c) => (c ? a.concat(parseInt(c)) : a), []);
+    };
+
+    const handleSubmit = (event) => {
+      event.preventDefault();
+      console.log(event);
+    };
+    const pageView = () => ({
+      id: 0,
+      idempotent_id: uuidToRust(crypto.randomUUID()),
+      page_title: document.title,
+      page_location: window.location.href,
+      page_path: window.location.pathname,
+      page_referrer: document.referrer,
+      user_agent: window.navigator.userAgent,
+      page_encoding: document.characterSet,
+      engagement_time_msec: Date.now(),
+      anonymous_id: uuidToRust("f05f7daf-20b9-4049-aae6-49bb721da505"),
+    });
+
+    async function fetchData(event) {
+      console.log(event);
+      const body = JSON.stringify(pageView());
+      try {
+        console.log(body);
+        const resp = await fetch("http://127.0.0.1:7878/page_view", {
+          mode: "cors",
+          method: "POST",
+          body,
+          headers: { "Content-Type": "application/json" },
+        });
+        if (resp.ok) {
+          const data = await resp.json();
+          console.log(data);
+        }
+      } catch ({ message }) {
+        console.log({ message });
+      }
+    }
+  </script>
+  <script>
+    const data = [
+      {
+        category: "login",
+        action: "login_via_email",
+      },
+      {
+        category: "login",
+        action: "login_via_google",
+      },
+      {
+        category: "login",
+        action: "login_via_linkedin",
+      },
+      {
+        category: "signup",
+        action: "signup_via_referral",
+        label: "registration_started",
+      },
+      {
+        category: "signup",
+        action: "signup_via_referral",
+        label: "registration_completed",
+      },
+      {
+        category: "signup",
+        action: "signup_via_referral",
+        label: "step_one",
+      },
+      {
+        category: "error",
+        action: "page_not_found",
+        label: "error_code_500",
+        description: "500 Server Error",
+      },
+      {
+        category: "error",
+        action: "login_error",
+        label: "incorrect_password",
+      },
+      {
+        category: "error",
+        action: "checkout_error",
+        label: "card_declined",
+      },
+      {
+        category: "error",
+        action: "checkout_error",
+        label: "invalid_ccv",
+      },
+
+      {
+        category: "lead",
+        action: "popup",
+        label: "webinar_popup",
+      },
+      {
+        category: "file_download",
+        action: "brochure.pdf",
+        label: "page_path",
+      },
+      {
+        category: "video",
+        action: "play",
+        label: "video_title|video_id",
+      },
+      {
+        category: "outbound_link",
+        action: "hostname",
+        label: "{{Page_Url}}", // {{Click_Url}}
+      },
+      {
+        category: "scroll",
+        action: "scroll_distance",
+        value: "30px",
+        label: "{{Page_Url}}",
+        description: "",
+      },
+      {
+        category: "call_to_action",
+        action: "cta_sign_up_button",
+        label: " {{Click_Text}}", // cta text
+      },
+    ];
+  </script>
 </html>

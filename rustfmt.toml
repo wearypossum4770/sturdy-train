@@ -1,0 +1,9 @@
+use_field_init_shorthand=true
+merge_derives=true
+edition="2021"
+fn_params_layout="Compressed"
+short_array_element_width_threshold=20
+struct_lit_width=40
+array_width=90
+chain_width=90
+attr_fn_like_width=90
