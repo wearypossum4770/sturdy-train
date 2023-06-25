@@ -1,0 +1,36 @@
+<script>
+  const [pageStart, sorageKey, gtmStorageKey] = (()=> [Date.now(), 'sturdy-train', 'gtm'])()
+  window.dataLayerAdvanced = window.dataLayerAdvanced ?? [];
+  window.dataLayer = window.dataLayer ?? [];
+  const gtag = (...args) => dataLayer.push(...args, {timestamp: Date.now()})
+  const sturdyTrain =(event, data) =>dataLayerAdvanced.push({ event, gmt: data, timestamp:Date.now() });
+  sturdyTrain('pageStart', pageStart)
+  sturdyTrain('js', Date.now())
+  sturdyTrain('set', 'storageKey', 'sturdy-train-analytics', sorageKey)
+  sturdyTrain('set', 'storageKey', 'google-analytics', gtmStorageKey)  
+  gtag({ pageCategory: "Statistics", visitorType: "high-value" });
+  gtag({ pageCategory: "Maths" });
+  gtag("config", "G-7GXWLWN2XW");
+  gtag("config", "G-LF57J0Z1X6");
+  let data = JSON.parse(localStorage.getItem(sorageKey))
+    if (!data) {
+    const payload = {timestamp:pageStart, anonymous_id: crypto.randomUUID()}
+    localStorage.setItem(sorageKey, JSON.stringify(payload))
+    sturdyTrain({eventName: 'first_visit',  payload})
+  } else {
+    sturdyTrain({eventName: 'return_visit', payload: data})
+  }
+  window.addEventListener("loaded", () => sturdyTrain("page_view", pageView()));
+</script>
+<script
+  async
+  src="https://www.googletagmanager.com/gtag/js?id=G-LF57J0Z1X6"
+></script>
+<script
+  async
+  src="https://www.googletagmanager.com/gtag/js?id=G-7GXWLWN2XW"
+></script>
+<script async src="./google-analytics.js">
+dataLayerAdvanced.reset = () => dataLayerAdvanced = []
+dataLayer.reset = () => dataLayer = []
+</script>

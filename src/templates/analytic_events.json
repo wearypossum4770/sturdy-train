@@ -1,0 +1,8 @@
+[
+  "notification_dismiss",
+  "notification_receive",
+  "os_update",
+  "screen_view",
+  "session_start",
+  "first_open"
+]
