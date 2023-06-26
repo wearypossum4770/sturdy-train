@@ -49,6 +49,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(get_pool()))
             .app_data(set_cors())
             .app_data(middleware::Logger::default()) // enable logger
+            .app_data(Logger::new("  %a %t '%r' %s %b '%{Referer}i' '%{User-Agent}i' %T"))
             // .service(Files::new("", ".").show_files_listing())
             .service(index)
             // .route("/blog", web::get().to(blog_index))
