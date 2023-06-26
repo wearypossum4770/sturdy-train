@@ -1,10 +1,9 @@
-use crate::schema::{create_page_view, page_view};
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
 use uuid::{Bytes, Uuid};
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize, Queryable, Selectable, Insertable)]
-#[diesel(table_name = page_view)]
+#[diesel(table_name = crate::schema::page_view)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct PageView {
     pub id: i32,
@@ -19,8 +18,8 @@ pub struct PageView {
     pub anonymous_id: Uuid,
 }
 
-#[derive(Debug, Default, Clone, Serialize, Deserialize, Insertable, Queryable)]
-#[diesel(table_name = create_page_view)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize, Insertable, Queryable, Selectable)]
+#[diesel(table_name = crate::schema::create_page_view)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct CreatePageView {
     pub id: i32,
@@ -39,14 +38,11 @@ pub struct CreatePageView {
 
 impl From<CreatePageView> for PageView {
     fn from(obj: CreatePageView) -> Self {
-        let mut page_referrer: String = obj.page_referrer.unwrap_or_default();
-
-        // let anonymous_id
         PageView {
             page_title: obj.page_title.to_owned(),
             page_location: obj.page_location.to_owned(),
             page_path: obj.page_path.to_owned(),
-            page_referrer: Some(page_referrer),
+            page_referrer: obj.page_referrer,
             user_agent: obj.user_agent.to_owned(),
             page_encoding: obj.page_encoding.to_owned(),
             engagement_time_msec: obj.engagement_time_msec.to_owned(),

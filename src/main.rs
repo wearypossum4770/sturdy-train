@@ -17,6 +17,12 @@ use crate::analytics::routes::page_routes;
 use crate::config::{api_config::AppState, postgres::get_pool};
 use crate::core::constants;
 
+#[cfg(not(windows))]
+const EOF: &str = "CTRL+D";
+
+#[cfg(windows)]
+const EOF: &str = "CTRL+Z";
+
 async fn health_check() -> impl Responder {
     HttpResponse::Ok()
 }
@@ -29,17 +35,6 @@ fn set_app_state() -> AppState {
 async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "debug");
     dotenvy::dotenv().ok();
-    let bytes: [i32; 16] = [
-        0xa1, 0xa2, 0xa3, 0xa4, 0xb1, 0xb2, 0xc1, 0xc2, 0xd1, 0xd2, 0xd3, 0xd4, 0xd5, 0xd6, 0xd7,
-        0xd8,
-    ];
-    let arr: [i32; 16] = [
-        0xf0, 0x5f, 0x7d, 0xaf, 0x20, 0xb9, 0x40, 0x49, 0xaa, 0xe6, 0x49, 0xbb, 0x72, 0x1d, 0xa5,
-        0x05,
-    ];
-    let uuid = Uuid::from_bytes(bytes);
-    println!("{:?}", uuid);
-    println!("{:?}", Uuid::from_bytes(arr));
 
     let hostname: &str = constants::HOST_NAME;
     let db_url: String = env::var("DATABASE_URL").expect("DATABASE_URL is not set in .env file");
@@ -59,11 +54,11 @@ async fn main() -> std::io::Result<()> {
             // .route("/blog", web::get().to(blog_index))
             // .service(Files::new("", "./templates/index.html"))
             .route("/debug", web::get().to(app_state_debug))
-            .service(web::scope("/page_view")
-            .service(web::post().to(page_routes::create_new_page_view))
-            .service(web::post().to(page_routes::new_page_view))
-
-        )
+            .service(
+                web::scope("/page_view")
+                    .service(page_routes::create_new_page_view)
+                    .service(page_routes::new_page_view),
+            )
             .route("/health_check", web::get().to(health_check))
     })
     .bind(hostname)?
